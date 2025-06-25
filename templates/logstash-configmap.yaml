@@ -1,0 +1,25 @@
+{{- if .Values.logstash.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-config
+  namespace: {{ .Release.Namespace }}
+data:
+  logstash.conf: |
+    input {
+      beats {
+        port => {{ .Values.logstash.pipelinePort }}
+      }
+    }
+
+    filter {
+      # You can add filters like grok, json parsing here if needed later
+    }
+
+    output {
+      elasticsearch {
+        hosts => ["http://elasticsearch.{{ .Release.Namespace }}.svc.cluster.local:9200"]
+        index => "filebeat-%{+YYYY.MM.dd}"
+      }
+    }
+{{- end }}

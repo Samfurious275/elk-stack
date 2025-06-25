@@ -1,0 +1,35 @@
+namespace: logging
+
+elasticsearch:
+  enabled: true
+  replicas: 1
+  image: elasticsearch:7.17.0
+  heapSize: "512m"
+  storage: "2Gi"
+  storageClassName: standard
+  servicePort: 9200
+
+logstash:
+  enabled: true
+  replicas: 1
+  image: docker.elastic.co/logstash/logstash:7.17.0
+  pipelinePort: 5044
+  metricsPort: 9600
+
+kibana:
+  enabled: true
+  replicas: 1
+  image: kibana:7.17.0
+  servicePort: 5601
+  nodePort: 30601
+
+filebeat:
+  enabled: true
+  image: docker.elastic.co/beats/filebeat:7.17.0
+  logstashHost: "logstash.logging.svc.cluster.local:5044"
+  resources:
+    limits:
+      memory: 200Mi
+    requests:
+      cpu: 100m
+      memory: 100Mi

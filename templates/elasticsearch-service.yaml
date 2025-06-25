@@ -1,0 +1,14 @@
+{{- if .Values.elasticsearch.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    app: elasticsearch
+  ports:
+    - protocol: TCP
+      port: {{ .Values.elasticsearch.servicePort }}
+      targetPort: {{ .Values.elasticsearch.servicePort }}
+{{- end }}

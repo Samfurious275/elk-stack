@@ -1,0 +1,69 @@
+{{- if .Values.filebeat.enabled }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: filebeat
+  namespace: {{ .Release.Namespace }}
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: filebeat
+rules:
+- apiGroups: [""]
+  resources:
+  - namespaces
+  - pods
+  - nodes
+  verbs:
+  - get
+  - watch
+  - list
+- apiGroups: ["apps"]
+  resources:
+  - replicasets
+  verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: filebeat
+  namespace: {{ .Release.Namespace }}
+rules:
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs: ["get", "create", "update"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: filebeat
+  namespace: {{ .Release.Namespace }}
+subjects:
+- kind: ServiceAccount
+  name: filebeat
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: Role
+  name: filebeat
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: filebeat
+subjects:
+- kind: ServiceAccount
+  name: filebeat
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: filebeat
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

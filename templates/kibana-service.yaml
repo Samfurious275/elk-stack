@@ -1,0 +1,14 @@
+{{- if .Values.kibana.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: NodePort
+  selector:
+    app: kibana
+  ports:
+    - port: {{ .Values.kibana.servicePort }}
+      nodePort: {{ .Values.kibana.nodePort }}
+{{- end }}

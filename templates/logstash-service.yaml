@@ -1,0 +1,14 @@
+{{- if .Values.logstash.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: logstash
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    app: logstash
+  ports:
+    - protocol: TCP
+      port: {{ .Values.logstash.pipelinePort }}
+      targetPort: {{ .Values.logstash.pipelinePort }}
+{{- end }}

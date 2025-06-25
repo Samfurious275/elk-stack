@@ -1,0 +1,25 @@
+{{- if .Values.kibana.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.kibana.replicas }}
+  selector:
+    matchLabels:
+      app: kibana
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+        - name: kibana
+          image: {{ .Values.kibana.image }}
+          env:
+            - name: ELASTICSEARCH_HOSTS
+              value: http://elasticsearch:9200
+          ports:
+            - containerPort: {{ .Values.kibana.servicePort }}
+{{- end }}

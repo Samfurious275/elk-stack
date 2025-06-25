@@ -1,0 +1,34 @@
+{{- if .Values.logstash.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logstash
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.logstash.replicas }}
+  selector:
+    matchLabels:
+      app: logstash
+  template:
+    metadata:
+      labels:
+        app: logstash
+    spec:
+      containers:
+      - name: logstash
+        image: {{ .Values.logstash.image }}
+        ports:
+        - containerPort: {{ .Values.logstash.pipelinePort }}
+        - containerPort: {{ .Values.logstash.metricsPort }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /usr/share/logstash/pipeline/logstash.conf
+          subPath: logstash.conf
+      volumes:
+      - name: config-volume
+        configMap:
+          name: logstash-config
+          items:
+          - key: logstash.conf
+            path: logstash.conf
+{{- end }}
